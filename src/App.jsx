@@ -769,29 +769,32 @@ function DownloadApp({ onClose }) {
           <span>1</span>
           <div>
             <b>Download & unzip</b>
-            <p>Install Node.js 22.12 or newer on the host computer.</p>
+            <p>Choose one computer to host the family arcade.</p>
           </div>
         </li>
         <li>
           <span>2</span>
           <div>
-            <b>Open the launcher</b>
+            <b>Install once</b>
             <p>
-              Windows: Start-Windows.cmd
+              Windows: Install-Windows.cmd
               <br />
-              Mac: Start-Mac.command
+              Mac: Install-Mac.command
               <br />
-              Linux: bash Start-Linux.sh
+              Linux: bash Install-Linux.sh
+              <br />
+              The installer sets up the app and downloads Node.js if needed.
             </p>
           </div>
         </li>
         <li>
           <span>3</span>
           <div>
-            <b>Invite the family</b>
+            <b>Start & invite</b>
             <p>
-              Share the Wi-Fi address and invite code printed by the app. Leave
-              the host computer running.
+              Next time, open a new terminal and type Holiday-arcade. Share the
+              Wi-Fi address and invite code it prints. Keep that terminal open
+              while everyone plays.
             </p>
           </div>
         </li>

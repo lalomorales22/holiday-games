@@ -1,7 +1,10 @@
 import "dotenv/config";
 import os from "node:os";
+import path from "node:path";
 import { createHouse } from "./app.js";
-const house = createHouse();
+const house = createHouse({
+  dataDir: path.resolve(process.env.HOLIDAY_DATA_DIR || ".holiday-data"),
+});
 const port = Number(process.env.PORT || 3000);
 house.server.listen(port, "0.0.0.0", () => {
   console.log(
@@ -18,8 +21,25 @@ house.server.listen(port, "0.0.0.0", () => {
     `  AI designer: ${house.store.getKey() ? "connected" : "demo mode — configure in Host settings"}\n`,
   );
 });
-for (const signal of ["SIGTERM", "SIGINT"])
-  process.on(signal, async () => {
-    await house.close();
-    process.exit(0);
-  });
+house.server.on("error", async (error) => {
+  console.error(
+    error.code === "EADDRINUSE"
+      ? `Port ${port} is already in use. Close the other server or change PORT in .env.`
+      : `The arcade could not listen: ${error.message}`,
+  );
+  await house.close();
+  process.exit(1);
+});
+let closing = false;
+async function shutdown() {
+  if (closing) return;
+  closing = true;
+  await house.close();
+  process.exit(0);
+}
+for (const signal of ["SIGTERM", "SIGINT", "SIGHUP"])
+  process.on(signal, shutdown);
+process.on("message", (message) => {
+  if (message?.type === "holiday-arcade:shutdown") shutdown();
+});
+if (process.send) process.once("disconnect", shutdown);

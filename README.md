@@ -37,7 +37,9 @@ Players use **WASD / arrow keys** on a computer or the **joystick** on a phone. 
 
 ## Open the doors
 
-Install **[Node.js 22.12 or newer](https://nodejs.org/)** on the host computer, then:
+**Downloaded the home-server ZIP?** Unzip it and run the [one-time installer](#install-once-one-command-after-that). It handles Node.js, dependencies, and the start command for you.
+
+Starting from this repository also works. If you already have **[Node.js 22.12 or newer](https://nodejs.org/)**:
 
 ```sh
 git clone https://github.com/lalomorales22/holiday-games.git
@@ -46,6 +48,8 @@ npm ci
 npm run build
 npm start
 ```
+
+Or clone the repository and run `bash Install-Linux.sh`, open `Install-Mac.command`, or open `Install-Windows.cmd`. The installer builds the website when starting from source, and starts the installed arcade after setup. With Node already installed, `npm run install:app` installs without starting it.
 
 The terminal prints the host's local and Wi-Fi addresses, the **family invite code**, and a **host password** on first launch. Save the password; it unlocks settings. Open the dashboard on the host, then give everyone the Wi-Fi address and invite code.
 
@@ -96,19 +100,46 @@ For a local OpenAI-compatible provider, Ollama can use `http://127.0.0.1:11434/v
 npm run package
 ```
 
-This builds **`downloads/holiday-arcade.zip`**, also available through **Get the home server** in the dashboard. The bundle includes the production app, server, lockfile, this README and artwork, game-making skill, examples, and launchers. It excludes credentials, family data, photos, and installed dependencies.
+This builds **`downloads/holiday-arcade.zip`**, also available through **Get the home server** in the dashboard. The bundle includes the production app, server, lockfile, this README and artwork, game-making skill, examples, installers, and portable launchers. It excludes credentials, family data, photos, and installed dependencies.
 
-Download, unzip, install Node.js 22.12+, and launch:
+### Install once, one command after that
 
-| Computer | Open or run |
+Unzip the download and run:
+
+| Computer | One-time setup |
 | --- | --- |
-| Windows | `Start-Windows.cmd` |
-| macOS | `Start-Mac.command` |
-| Linux | `bash Start-Linux.sh` |
+| Windows | Open `Install-Windows.cmd` |
+| macOS | Open `Install-Mac.command`, or run `bash Install-Mac.command` |
+| Linux | Run `bash Install-Linux.sh` |
 
-The first launch downloads the locked production dependencies. Later launches reuse them. If macOS drops executable permissions, run `chmod +x Start-Mac.command` or `bash Start-Mac.command` in the extracted folder. If you set a custom `PORT` in `.env`, open the printed address manually; automatic browser launch uses the shell's `PORT` or 3000.
+The installer reuses a compatible Node.js 22.12+ installation, or downloads a private **Node.js 24 LTS** runtime from nodejs.org and verifies its SHA-256 checksum. It installs all app dependencies and adds **`Holiday-arcade`** to your user PATH. No administrator access is required. Internet access is needed for this first setup.
 
-This is a portable Node app. The Linux bundle has been exercised; Windows and macOS launchers still need testing on those operating systems. A signed native installer and automatic updates are future work.
+The first setup starts the arcade. After that, **open a new terminal** and type:
+
+```sh
+Holiday-arcade
+```
+
+That starts the production website **and** Socket.IO / WebSocket multiplayer server in one process and opens your browser once ready. It works from any folder; the original ZIP and extracted download can be removed. Keep the terminal open while everyone plays. **Ctrl+C stops both servers.** The command starts the app manually; it does not install a background service or start at login.
+
+| Installed files | Location |
+| --- | --- |
+| macOS / Linux | `~/.holiday-arcade/` |
+| Windows | `%LOCALAPPDATA%\HolidayArcade\` |
+| App files | `app/` inside that folder |
+| Settings and saved family worlds | `.env` and `.holiday-data/` beside `app/` |
+
+Set `PORT` and other environment settings in that installation's `.env`. Reinstalling replaces app files after setup succeeds and preserves the installed `.env` and `.holiday-data/`. Stop the running arcade before reinstalling. The installer creates a fresh household; it does not copy private family data or credentials from the downloaded folder or a source checkout.
+
+On macOS / Linux, the installer adds a marked PATH block to bash and zsh startup files. On Windows it updates the current user's PATH. Existing unrelated startup content is preserved. For other shells, add the installation's `bin/` folder to PATH manually. If a terminal doesn't find the command, open a new terminal or run the printed command path directly.
+
+For setup without starting the server, use `bash Install-Linux.sh --no-start`, `bash Install-Mac.command --no-start`, or `Install-Windows.cmd -NoStart`. Set `HOLIDAY_INSTALL_DIR` to an empty custom installation folder if needed. `Holiday-arcade --no-open` starts without opening a browser; `Holiday-arcade --help` shows usage.
+
+### Portable launchers
+
+You can also run the original `Start-Windows.cmd`, `Start-Mac.command`, or `bash Start-Linux.sh` in the extracted folder with Node.js 22.12+ already installed. These launch in place without installing a persistent command; keep that folder. First launch installs production dependencies. If macOS drops executable permissions, use `chmod +x Start-Mac.command` or run it with bash. With a custom `PORT` in `.env`, open the printed address manually; these portable launchers use the shell's `PORT` or 3000 for automatic browser opening.
+
+The Linux installer and bundle have been exercised. Windows and macOS installers and launchers still need testing on those operating systems. A signed native installer and automatic updates are future work.
 
 ## Same family, different houses
 
@@ -124,7 +155,7 @@ A configured HTTPS reverse proxy with WebSocket support also works. Preserve the
 
 ## What's saved for next holiday?
 
-Games, member profiles, photos, building blocks, and custom shared state live in **`.holiday-data/`** on the host. Keep that folder and `.env` private when backing up. There is no database or cloud storage to provision; one Node process runs the arcade.
+Games, member profiles, photos, building blocks, and custom shared state live in **`.holiday-data/`** on the host: inside the installed folder for `Holiday-arcade`, or the project/extracted folder when using `npm start` or a portable launcher. Keep that folder and `.env` private when backing up. There is no database or cloud storage to provision; one Node process runs the arcade.
 
 Active rounds, online presence, sessions, and build jobs reset when the server stops. Players rejoin with the invite code; interrupted builds must be submitted again. To start fresh, stop the server and back up or move `.holiday-data/`.
 

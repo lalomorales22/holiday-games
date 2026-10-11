@@ -22,9 +22,22 @@ export async function packageHouse(root = process.cwd()) {
     ".env.example",
     "README.md",
     "AGENTS.md",
+    "Install-Windows.cmd",
   ])
     archive.file(path.join(root, file), { name: `holiday-arcade/${file}` });
-  for (const folder of ["server", "dist", "skills", "scripts", "examples", "docs"])
+  for (const file of ["Install-Linux.sh", "Install-Mac.command"])
+    archive.file(path.join(root, file), {
+      name: `holiday-arcade/${file}`,
+      mode: 0o755,
+    });
+  for (const folder of [
+    "server",
+    "dist",
+    "skills",
+    "scripts",
+    "examples",
+    "docs",
+  ])
     archive.directory(path.join(root, folder), `holiday-arcade/${folder}`);
   for (const [source, name] of [
     ["windows.cmd", "Start-Windows.cmd"],
